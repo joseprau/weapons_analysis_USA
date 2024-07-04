@@ -1,203 +1,201 @@
 import sys
 
-# Importem totes les funcions dels arxius ja que faran falta totes
+# Import all functions from the modules as they will all be needed
 from moduls.data_visualisation import *
 from moduls.data_exploration import *
 from moduls.reding_processing import *
 
 def ex1():
     """
-    Funció per executar exercici 1
+    Function to execute exercise 1
     :param :
     :return:
     """
     print("\n")
-    print("#"*50)
-    print("Exercici 1")
-    filename = "Data/nics-firearm-background-checks.csv"  # Definim el nom del fitxer
-    import_df = read_csv(filename)  # Cridem funcio per importar csv
-    df = clean_csv(import_df)  # Cridem funció per eliminar columnes
-    df = rename_col(df)  # Cridem funció per renombrar columnes
+    print("#" * 50)
+    print("Exercise 1")
+    filename = "Data/nics-firearm-background-checks.csv"  # Define the file name
+    import_df = read_csv(filename)  # Call function to import csv
+    df = clean_csv(import_df)  # Call function to remove columns
+    df = rename_col(df)  # Call function to rename columns
     return df
 
 
 def ex2():
     """
-    Funció per executar ex2
+    Function to execute exercise 2
     :param :
     :return:
     """
     df = ex1()
     print("\n")
-    print("#"*50)
-    print("Exercici 2")
-    df = breakdown_date(df)  # Cridem funcio per separar mes i any
-    df = erase_month(df)  # Cridem funcio per eliminar mes
+    print("#" * 50)
+    print("Exercise 2")
+    df = breakdown_date(df)  # Call function to split month and year
+    df = erase_month(df)  # Call function to remove month
     return df
 
 def ex3():
     """
-    Funció per executar ex3
+    Function to execute exercise 3
     :param :
     :return:
     """
     df = ex2()
     print("\n")
-    print("#"*50)
-    print("Exercici 3")
-    grouped = groupby_state_and_year(df)  # Cridem funcio per agrupar per any i estat
-    print_biggest_handguns(grouped)  # Mostrem estat i any amb més hand guns
-    print_biggest_longguns(grouped)  # Mostrem estat i any amb més long gun
+    print("#" * 50)
+    print("Exercise 3")
+    grouped = groupby_state_and_year(df)  # Call function to group by year and state
+    print_biggest_handguns(grouped)  # Show state and year with the most handguns
+    print_biggest_longguns(grouped)  # Show state and year with the most long guns
 
 
 def ex4():
     """
-    Funció per executar ex4
+    Function to execute exercise 4
     :return:
     """
     df = ex2()
     print("\n")
-    print("#"*50)
-    print("Exercici 4")
-    time_evolution(df, "grafiques/")  # Cridem la funció per crear un gràfic evolutiu
+    print("#" * 50)
+    print("Exercise 4")
+    time_evolution(df, "graphs/")  # Call function to create a time evolution graph
 
 
 def ex5():
     """
-    Funció per executar ex5
+    Function to execute exercise 5
     :return:
     """
     df = ex2()
     print("\n")
-    print("#"*50)
-    print("Exercici 5")
-    grouped = groupby_state_and_year(df)  # Cridem funcio per agrupar per any i estat
-    state_grouped = groupby_state(grouped)  # Cridem funció per agrupar per estat
-    clean = clean_state(state_grouped)  # Cridem funció per eliminar estats
-    file_pops = "Data/us-state-populations.csv"  # Definim full_path de fitxer amb poblacions
-    pops_df = read_csv(file_pops)  # Cridem funcio per importar csv
-    merged_df = merge_datasets(clean, pops_df)  # Cridem funcio per fusionar dos dfs
-    perc_df = calculate_relative_value(merged_df)  # Cridem funció per calcular els valors relatius
-    mean_permit_pct = perc_df['permit_perc'].mean()  # Calculem la mitja de permit_pct
-    print("\nLa mitjana de permit_perc %.2f" % mean_permit_pct)  # Mostrem per pantalla la mitja de permit_perc
-    kentucky = perc_df[perc_df['state'] == "Kentucky"]  # Seleccionem i mostrem les dades de kentucky
-    print(kentucky)  # Mostrem dades de kentucky
-    perc_df.loc[perc_df['state'] == 'Kentucky', 'permit_perc'] = mean_permit_pct  # Modifiquem permit_perc de kentucky
-    mean_permit_pct_1 = perc_df['permit_perc'].mean()  # Calculem de nou la mitja
-    print("\nLa mitjana de permit_perc després de la modificació és %.2f" % mean_permit_pct_1)  # Mostrem la mitja nova
+    print("#" * 50)
+    print("Exercise 5")
+    grouped = groupby_state_and_year(df)  # Call function to group by year and state
+    state_grouped = groupby_state(grouped)  # Call function to group by state
+    clean = clean_state(state_grouped)  # Call function to remove states
+    file_pops = "Data/us-state-populations.csv"  # Define the file path for the population data
+    pops_df = read_csv(file_pops)  # Call function to import csv
+    merged_df = merge_datasets(clean, pops_df)  # Call function to merge two dataframes
+    perc_df = calculate_relative_value(merged_df)  # Call function to calculate relative values
+    mean_permit_pct = perc_df['permit_perc'].mean()  # Calculate the average of permit_pct
+    print("\nThe average permit_perc is %.2f" % mean_permit_pct)  # Display the average permit_perc
+    kentucky = perc_df[perc_df['state'] == "Kentucky"]  # Select and display Kentucky data
+    print(kentucky)  # Display Kentucky data
+    perc_df.loc[perc_df['state'] == 'Kentucky', 'permit_perc'] = mean_permit_pct  # Modify Kentucky's permit_perc
+    mean_permit_pct_1 = perc_df['permit_perc'].mean()  # Recalculate the average
+    print("\nThe average permit_perc after modification is %.2f" % mean_permit_pct_1)  # Display the new average
     return perc_df
 
 def ex6():
     """"
-    Funció per executar ex6
+    Function to execute exercise 6
     """
     df = ex5()
     print("\n")
-    print("#"*50)
-    print("Exercici 6")
+    print("#" * 50)
+    print("Exercise 6")
     url = (
         "https://raw.githubusercontent.com/python-visualization/folium/main/examples/data"
-    )  # Definim la URL amb el fitxer JSON amb informació dels estats
-    state_geo = f"{url}/us-states.json"  # Definim el full_path del fitxer json
-    metrics = ["permit_perc", "longgun_perc",
-               "handgun_perc"]  # Definim les mètriques per les quals volem obtienir un mapa
-    for m in metrics:  # Iterem per les mètriques
-        maping_folium(df, m, state_geo, "grafiques/")  # Cridem la funció per crear i guardar els mapes interactius
+    )  # Define the URL with the JSON file containing state information
+    state_geo = f"{url}/us-states.json"  # Define the file path for the JSON file
+    metrics = ["permit_perc", "longgun_perc", "handgun_perc"]  # Define the metrics for which we want to obtain a map
+    for m in metrics:  # Iterate over the metrics
+        mapping_folium(df, m, state_geo, "graphs/")  # Call the function to create and save interactive maps
 
 
 def all():
     """
-     Funció per executar tots els exercicis alhora.
-     :return:
-     """
+    Function to execute all exercises at once.
+    :return:
+    """
     # Ex1
     print("\n")
-    print("#"*50)
-    print("Exercici 1")
-    filename = "Data/nics-firearm-background-checks.csv"  # Definim el nom del fitxer
-    import_df = read_csv(filename)  # Cridem funcio per importar csv
-    df = clean_csv(import_df)  # Cridem funció per eliminar columnes
-    df = rename_col(df)  # Cridem funció per renombrar columnes
+    print("#" * 50)
+    print("Exercise 1")
+    filename = "Data/nics-firearm-background-checks.csv"  # Define the file name
+    import_df = read_csv(filename)  # Call function to import csv
+    df = clean_csv(import_df)  # Call function to remove columns
+    df = rename_col(df)  # Call function to rename columns
 
     # Ex2
     print("\n")
-    print("#"*50)
-    print("Exercici 2")
-    df = breakdown_date(df)  # Cridem funcio per separar mes i any
-    df = erase_month(df)  # Cridem funcio per eliminar mes
+    print("#" * 50)
+    print("Exercise 2")
+    df = breakdown_date(df)  # Call function to split month and year
+    df = erase_month(df)  # Call function to remove month
 
     # Ex3
     print("\n")
-    print("#"*50)
-    print("Exercici 3")
-    grouped = groupby_state_and_year(df)  # Cridem funcio per agrupar per any i estat
-    print_biggest_handguns(grouped)  # Mostrem estat i any amb més hand guns
-    print_biggest_longguns(grouped)  # Mostrem estat i any amb més long gun
+    print("#" * 50)
+    print("Exercise 3")
+    grouped = groupby_state_and_year(df)  # Call function to group by year and state
+    print_biggest_handguns(grouped)  # Show state and year with the most handguns
+    print_biggest_longguns(grouped)  # Show state and year with the most long guns
 
     # Ex4
     print("\n")
-    print("#"*50)
-    print("Exercici 4")
-    time_evolution(df, "grafiques/")  # Cridem la funció per crear un gràfic evolutiu
+    print("#" * 50)
+    print("Exercise 4")
+    time_evolution(df, "graphs/")  # Call the function to create a time evolution graph
 
     # Ex5
     print("\n")
     print("#" * 50)
-    print("Exercici 5")
-    state_grouped = groupby_state(grouped)  # Cridem funció per agrupar per estat
-    clean = clean_state(state_grouped)  # Cridem funció per eliminar estats
-    file_pops = "Data/us-state-populations.csv"  # Definim full_path de fitxer amb poblacions
-    pops_df = read_csv(file_pops)  # Cridem funcio per importar csv
-    merged_df = merge_datasets(clean, pops_df)  # Cridem funcio per fusionar dos dfs
-    perc_df = calculate_relative_value(merged_df)  # Cridem funció per calcular els valors relatius
-    mean_permit_pct = perc_df['permit_perc'].mean()  # Calculem la mitja de permit_pct
-    print("\nLa mitjana de permit_perc %.2f" % mean_permit_pct)  # Mostrem per pantalla la mitja de permit_perc
-    kentucky = perc_df[perc_df['state'] == "Kentucky"]  # Seleccionem i mostrem les dades de kentucky
-    print(kentucky)  # Mostrem dades de kentucky
-    perc_df.loc[perc_df['state'] == 'Kentucky', 'permit_perc'] = mean_permit_pct  # Modifiquem permit_perc de kentucky
-    mean_permit_pct_1 = perc_df['permit_perc'].mean()  # Calculem de nou la mitja
-    print("\nLa mitjana de permit_perc després de la modificació és %.2f" % mean_permit_pct_1)  # Mostrem la mitja nova
+    print("Exercise 5")
+    state_grouped = groupby_state(grouped)  # Call function to group by state
+    clean = clean_state(state_grouped)  # Call function to remove states
+    file_pops = "Data/us-state-populations.csv"  # Define the file path for the population data
+    pops_df = read_csv(file_pops)  # Call function to import csv
+    merged_df = merge_datasets(clean, pops_df)  # Call function to merge two dataframes
+    perc_df = calculate_relative_value(merged_df)  # Call function to calculate relative values
+    mean_permit_pct = perc_df['permit_perc'].mean()  # Calculate the average of permit_pct
+    print("\nThe average permit_perc is %.2f" % mean_permit_pct)  # Display the average permit_perc
+    kentucky = perc_df[perc_df['state'] == "Kentucky"]  # Select and display Kentucky data
+    print(kentucky)  # Display Kentucky data
+    perc_df.loc[perc_df['state'] == 'Kentucky', 'permit_perc'] = mean_permit_pct  # Modify Kentucky's permit_perc
+    mean_permit_pct_1 = perc_df['permit_perc'].mean()  # Recalculate the average
+    print("\nThe average permit_perc after modification is %.2f" % mean_permit_pct_1)  # Display the new average
 
     # Ex6
     print("\n")
-    print("#"*50)
-    print("Exercici 6")
+    print("#" * 50)
+    print("Exercise 6")
     url = (
         "https://raw.githubusercontent.com/python-visualization/folium/main/examples/data"
-    )  # Definim la URL amb el fitxer JSON amb informació dels estats
-    state_geo = f"{url}/us-states.json"  # Definim el full_path del fitxer json
-    metrics = ["permit_perc", "longgun_perc",
-               "handgun_perc"]  # Definim les mètriques per les quals volem obtienir un mapa
-    for m in metrics:  # Iterem per les mètriques
-        maping_folium(perc_df, m, state_geo, "grafiques/")  # Cridem la funció per crear i guardar els mapes interactius
+    )  # Define the URL with the JSON file containing state information
+    state_geo = f"{url}/us-states.json"  # Define the file path for the JSON file
+    metrics = ["permit_perc", "longgun_perc", "handgun_perc"]  # Define the metrics for which we want to obtain a map
+    for m in metrics:  # Iterate over the metrics
+        mapping_folium(perc_df, m, state_geo, "graphs/")  # Call the function to create and save interactive maps
 
 
-def main(dictat, ex):
+def main(function_dict, ex):
     """
-    Funció principal per executar en cas de que s'executi com programa
-    :param dictat: dictat amb les funcions
-    :param ex: excercici per executar
+    Main function to execute if running as a program
+    :param function_dict: Dictionary with the functions
+    :param ex: Exercise to execute
     :return:
     """
-    if ex.isdigit():  # Comprova que el número sigui digit
-        f = int(ex)  # Converteix a int 
-        if f <=6:
+    if ex.isdigit():  # Check that the number is a digit
+        f = int(ex)  # Convert to int
+        if f <= 6:
             if f > 0:
-                print("Executant Ex: {}".format(ex))
+                print("Executing Exercise: {}".format(ex))
             else:
-                print("Executant PAC completa.")
-            dictat[f]()  # Executa la funció amb key f
+                print("Executing complete PAC.")
+            function_dict[f]()  # Execute the function with key f
         else:
-            print("Argument fora del rang. Valor entre [0, 6]")
+            print("Argument out of range. Value between [0, 6]")
             pass
     else:
-        print("Argument no numèric")  # Si el valor no és numèric passa
+        print("Non-numeric argument")  # If the value is not numeric, pass
         pass
 
 
-if __name__ == "__main__":  # Si executem com a programa principal executa la funció main.
+if __name__ == "__main__":  # If running as the main program, execute the main function.
     arg = sys.argv[1]
-    dictat_funcions = {
+    function_dict = {
         0: all,
         1: ex1,
         2: ex2,
@@ -206,5 +204,4 @@ if __name__ == "__main__":  # Si executem com a programa principal executa la fu
         5: ex5,
         6: ex6
     }
-    main(dictat_funcions, arg)
-
+    main(function_dict, arg)

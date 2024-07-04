@@ -1,19 +1,18 @@
 """
-Aquest modul definieix les funcions per importar els arxius, processar les dades i realitzar
-modificacions.
+This module defines functions to import files, process data, and make modifications.
 """
 
-# Importem llibreries
+# Import libraries
 import pandas as pd
 
 
 def read_csv(file_path: str) -> pd.DataFrame:
     """
-    Funció per importar el fitxer definit com a parametre.
-    :param file_path:
-    :return: dataframe
+    Function to import the file defined as a parameter.
+    :param file_path: Path to the CSV file
+    :return: DataFrame
     """
-    print("\nLlegint el fitxer: {}".format(file_path))
+    print("\nReading the file: {}".format(file_path))
     df = pd.read_csv(file_path, sep=",")
     print(df.columns[:5])
     return df
@@ -21,40 +20,40 @@ def read_csv(file_path: str) -> pd.DataFrame:
 
 def clean_csv(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Funció per netejar el dataframe eliminant una serie de columnes
-    :param df:
-    :return: dataframe net
+    Function to clean the DataFrame by removing a series of columns.
+    :param df: Input DataFrame
+    :return: Cleaned DataFrame
     """
-    print("\nEliminant algunes columnes")
+    print("\nRemoving some columns")
     keep = ["month", "state", "permit", "handgun", "long_gun"]
     try:
         df_clean = df[keep]
         print(df_clean.columns)
         return df_clean
-    except KeyError as e:  # Si no troba alguna columna mostra l'error.
+    except KeyError as e:  # If a column is not found, show the error.
         print(e)
         return df
 
 
 def rename_col(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Funció per canviar el nom de la columna long_gun a longgun
-    :param df:
-    :return: dataframe amb nom canviat
+    Function to rename the column long_gun to longgun.
+    :param df: Input DataFrame
+    :return: DataFrame with renamed column
     """
-    print("\nReanomenant columna longgun")
-    modified_df = df.rename({"long_gun": "longgun"}, axis=1)  # Canviem el nom de la columna
+    print("\nRenaming column longgun")
+    modified_df = df.rename({"long_gun": "longgun"}, axis=1)  # Rename the column
     print(modified_df.columns)
     return modified_df
 
 
-def breakdown_date(df:pd.DataFrame) -> pd.DataFrame:
+def breakdown_date(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Funció per dividir la columna 'month' en any i mes.
-    :param df:
-    :return: el dataframe amb la informació de la data dividida
+    Function to split the 'month' column into year and month.
+    :param df: Input DataFrame
+    :return: DataFrame with separated date information
     """
-    print("\nSeparant mes i any")
+    print("\nSplitting month and year")
     df[['year', 'month']] = df['month'].str.split("-", expand=True).astype(int)
     print(df.head(5))
     return df
@@ -62,24 +61,24 @@ def breakdown_date(df:pd.DataFrame) -> pd.DataFrame:
 
 def erase_month(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Funcióper eliminar la columna 'month'
-    :param df:
-    :return: df sense la columna month
+    Function to remove the 'month' column.
+    :param df: Input DataFrame
+    :return: DataFrame without the 'month' column
     """
-    print("\nEliminant columna mes")
+    print("\nRemoving month column")
     df = df.drop(columns=['month'])
-    print("Primeres 5 files:")
+    print("First 5 rows:")
     print(df.head(5))
-    print("\nColumnes: ")
+    print("\nColumns: ")
     print(df.columns)
     return df
 
 
 def groupby_state(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Funció per agrupar les dades només per estat
-    :param df agrupat per any i estat
-    :return: df agrupat per estat amb valors totals
+    Function to group data by state.
+    :param df: DataFrame grouped by year and state
+    :return: DataFrame grouped by state with total values
     """
     state_grouped = df.groupby(by='state')[['permit', 'handgun', 'longgun']].sum().reset_index()
     print(state_grouped.head(5))
@@ -88,55 +87,54 @@ def groupby_state(df: pd.DataFrame) -> pd.DataFrame:
 
 def clean_state(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Funció per eliminar els estats de Guam,Mariana Islands, Puerto Rico i Virgin Islands.
-    :param df: agrupada per estats
-    :return: df sense els estats eliminats
+    Function to remove the states of Guam, Mariana Islands, Puerto Rico, and Virgin Islands.
+    :param df: DataFrame grouped by states
+    :return: DataFrame without the removed states
     """
-    print("\nEliminant estats")
-    a_eliminar = ["Guam", "Mariana Islands", "Puerto Rico", "Virgin Islands"]
+    print("\nRemoving states")
+    to_remove = ["Guam", "Mariana Islands", "Puerto Rico", "Virgin Islands"]
 
     present = set()
-    no_presents = set()
+    not_present = set()
 
-    for s in a_eliminar:
+    for s in to_remove:
         if s in set(df.state):
             present.add(s)
         else:
-            no_presents.add(s)
+            not_present.add(s)
 
-    print("\nEstats trobats en el dataframe: {}".format(present))
-    if len(no_presents) > 0:
-        print("Estats no presents en el dataframe: {}".format(no_presents))
+    print("\nStates found in the DataFrame: {}".format(present))
+    if len(not_present) > 0:
+        print("States not present in the DataFrame: {}".format(not_present))
 
-    print("\nAbans d'eliminar els estats, s'han detectat {} estats".format(df['state'].nunique()))
+    print("\nBefore removing states, there are {} states detected".format(df['state'].nunique()))
     df_clean = df[~df['state'].isin(present)]
-    print("\nDesprés d'eliminar els estats, queden {} estats".format(df_clean['state'].nunique()))
+    print("\nAfter removing states, there are {} states left".format(df_clean['state'].nunique()))
 
     return df_clean
 
 
 def merge_datasets(df1: pd.DataFrame, df2: pd.DataFrame) -> pd.DataFrame:
     """
-    Fusiona els dos datasets rebuts com a parametres basats en columna state
-    :param df1: primer dataset
-    :param df2: segon dataset
-    :return: conjunt fusionat
+    Merges the two datasets received as parameters based on the state column.
+    :param df1: First dataset
+    :param df2: Second dataset
+    :return: Merged dataset
     """
-    print("\nFusionant dataframes")
-    merge_df = df1.merge(df2, 'left', on='state')
-    print(merge_df.head(5))
-    return merge_df
+    print("\nMerging dataframes")
+    merged_df = df1.merge(df2, 'left', on='state')
+    print(merged_df.head(5))
+    return merged_df
 
 
 def calculate_relative_value(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Calcula els valors relatius dels permisos, armes lleugeres i armes curtes en percentatge.
-    :param df: Dataframe inicial
-    :return df: Dataframe amb columnes de percentatges afegides
-
+    Calculates the relative values of permits, handguns, and longguns as percentages.
+    :param df: Initial DataFrame
+    :return: DataFrame with added percentage columns
     """
-    print("\nCalculant valors relatius")
-    df['permit_perc'] = df['permit']*100/df['pop_2014']
-    df['handgun_perc'] = df['handgun']*100/df['pop_2014']
-    df['longgun_perc'] = df['longgun']*100/df['pop_2014']
+    print("\nCalculating relative values")
+    df['permit_perc'] = df['permit'] * 100 / df['pop_2014']
+    df['handgun_perc'] = df['handgun'] * 100 / df['pop_2014']
+    df['longgun_perc'] = df['longgun'] * 100 / df['pop_2014']
     return df
